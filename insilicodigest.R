@@ -9,8 +9,8 @@
 library(SimRAD)
 
 ##Set location of files
-folderinput<-"C:/Users/N.S/Documents/research/dissertation/genome_p_gossypinus"
-folderoutput<-"C:/Users/N.S/Documents/research/dissertation"
+folderinput<-"C:/YOURDIRECTORY"
+folderoutput<-"C:/YOUROTHERDIRECTORY"
 reportname<-paste(folderoutput,"isd_window_reps",sep="/")
 
 ##THE GOAL: Aim for 20x coverage, 6 samples per locality,
