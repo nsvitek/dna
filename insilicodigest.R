@@ -9,8 +9,10 @@
 library(SimRAD)
 
 ##Set location of files
-folderinput<-"C:/YOURDIRECTORY"
-folderoutput<-"C:/YOUROTHERDIRECTORY"
+folderinput<-"/scratch/lfs/nvitek/in_silico_digest/genome_p_maniculatus"
+folderoutput<-"/scratch/lfs/nvitek/in_silico_digest/"
+#folderinput<-"C:/Users/N.S/Documents/Dissertation/in_silico_digest/genome_p_maniculatus"
+#folderoutput<-"C:/Users/N.S/Documents/Dissertation/in_silico_digest"
 reportname<-paste(folderoutput,"isd_window_reps",sep="/")
 
 ##THE GOAL: Aim for 20x coverage, 6 samples per locality,
@@ -21,7 +23,7 @@ samples_per_locality<-6
 reads<-110000000
 
 ##Set number of replicates and proportion of genome subsampled per replicate
-r<-6
+r<-100
 portion<-.10
 
 ##Set desired window sizes
@@ -37,36 +39,30 @@ cs_5p2<-"T"
 cs_3p2<-"TAA"
 
 
-sink(file=paste(reportname,"_report.txt",sep=""),append=TRUE)
+##Analysis starts here
+sink(file=paste(reportname,"_report.txt",sep=""),append=FALSE)
 Sys.Date()
 
 filename<-list.files(folderinput)
-rfsq<-NULL
 q<-length(filename)
+windowreps<-matrix(0,nrow=r,ncol=length(windowmin))
 for (a in 1:q){
   for (b in 1:round(r/q)){
-    rfsq[[round(r/q)*a+b-round(r/q)]]<-ref.DNAseq(paste(folderinput,filename[a],sep="/"),prop.contigs=(q*portion))
+    rfsq<-ref.DNAseq(paste(folderinput,filename[a],sep="/"),prop.contigs=(q*portion))
     print(paste("Reference sequence",filename[a],"replicate",b,"of",round(r/q),"loaded."))
+    print(paste("Replicate",round(r/q)*a+b-round(r/q),"of",round(r/q)*q))
+    digest<-insilico.digest(rfsq,cs_5p1,cs_3p1,cs_5p2,cs_3p2,verbose=TRUE)
+    aselect<-adapt.select(digest,type="AB+BA",cs_5p1,cs_3p1,cs_5p2,cs_3p2)
+    for (c in 1:length(windowmin)){
+      sizeselect<-size.select(aselect,min.size=windowmin[c],max.size=windowmax[c],graph=FALSE,verbose=FALSE)
+      windowreps[round(r/q)*a+b-round(r/q),c]<-length(sizeselect@ranges@group)
+    }
   }
 }
 
-##for each sample of the reference sequence, digest and select by window size:
-digest<-NULL
-aselect<-NULL
-windowreps<-matrix(0,nrow=length(rfsq),ncol=length(windowmin))
-for (c in 1:length(rfsq)){
-  print(paste("Replicate",c,"of",length(rfsq)))
-  digest<-insilico.digest(rfsq[[c]],cs_5p1,cs_3p1,cs_5p2,cs_3p2,verbose=TRUE)
-  aselect<-adapt.select(digest,type="AB+BA",cs_5p1,cs_3p1,cs_5p2,cs_3p2)
-  for (d in 1:length(windowmin)){
-    sizeselect<-size.select(aselect,min.size=windowmin[d],max.size=windowmax[d],graph=FALSE,verbose=FALSE)
-    windowreps[c,d]<-length(sizeselect@ranges@group)
-  }
-}
 sink()
 
 ##write a report for each window frame
-
 sink(file=paste(reportname,"_summary.txt",sep=""),append=FALSE)
 print(paste("Summary of",r,"replicates of",portion*100,"% subsampling of genome"))
 for (f in 1:length(windowmin)){
@@ -83,12 +79,3 @@ colnames(windowreps)<-print(paste(windowmin,"-",windowmax,"bp",sep=""))
 write.csv(windowreps,file=paste(reportname,".csv",sep=""),row.names=FALSE,col.names=TRUE)
 
 sink()
-
-# rfsq<-ref.DNAseq("AYHN01.1.fsa_nt.gz",prop.contigs=.5)
-# nchar(rfsq[[1]])
-# digest<-insilico.digest(rfsq,cs_5p1,cs_3p1,cs_5p2,cs_3p2,verbose=TRUE)
-# aselect<-adapt.select(digest,type="AB+BA",cs_5p1,cs_3p1,cs_5p2,cs_3p2)
-# length(aselect)
-# sselect4<-size.select(aselect,min.size=550,max.size=700,graph=TRUE,verbose=TRUE)
-# str(sselect4)
-# length(sselect4@ranges@group) #gives you  # of fragments
