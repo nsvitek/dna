@@ -11,8 +11,6 @@ library(SimRAD)
 ##Set location of files
 folderinput<-"/scratch/lfs/nvitek/in_silico_digest/genome_p_maniculatus"
 folderoutput<-"/scratch/lfs/nvitek/in_silico_digest/"
-#folderinput<-"C:/Users/N.S/Documents/Dissertation/in_silico_digest/genome_p_maniculatus"
-#folderoutput<-"C:/Users/N.S/Documents/Dissertation/in_silico_digest"
 reportname<-paste(folderoutput,"isd_window_reps",sep="/")
 
 ##THE GOAL: Aim for 20x coverage, 6 samples per locality,
