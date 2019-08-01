@@ -4,8 +4,8 @@
 library(dplyr)
 
 # set file paths ----- 
-# path_in<-"C://Users/N.S/Dropbox/Documents/Dissertation/modern/onychomys_leucogaster/radseq_analysis/02-demultiplex"
-path_in<-"D://rs"
+path_in<-"C://Users/N.S/Dropbox/Documents/Dissertation/modern/peromyscus_maniculatus/radseq"
+# path_in<-"D://rs"
 
 name_samples<-"retained_reads.txt"
 
@@ -21,7 +21,7 @@ specimen_df$Retained %>% hist()
 specimen_df$percent %>% hist()
 
 #look at which specimens have a very low % retained reads
-specimen_df[which(specimen_df$percent<0.2),] #still at least 400k reads.
+specimen_df[which(specimen_df$percent<0.4),] #still at least 400k reads.
 
 #order the specimens by # reads retained
 specimen_df<-specimen_df[order(specimen_df$Retained),]
@@ -32,5 +32,8 @@ specimen_df$Filename[1:5]
 
 
 #look at lowest number of reads
-specimen_df[which(specimen_df$Filename=="MSB-140226"),]
-specimen_df[which(specimen_df$Filename=="MSB-122896"),]
+specimen_df[which(specimen_df$Filename=="UWBM80320"),]
+specimen_df[which(specimen_df$Filename=="MSB150769"),]
+
+specimen_df[c(95:97),]
+
