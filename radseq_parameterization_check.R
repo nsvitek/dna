@@ -2,7 +2,7 @@
 #plus code by Yihan Wu on R-Bloggers: https://www.r-bloggers.com/parameter-testing-in-stacks-snp-extraction-and-visualization-in-r/
 library(ggplot2)
 
-path_in<-"D://rs"
+path_in<-"D://RADseq_PM"
 setwd(path_in)
 
 # make a data frame combining all parameter distributions 
